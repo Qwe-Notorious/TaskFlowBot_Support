@@ -2,7 +2,12 @@ import os
 import json
 import streamlit as st
 from bcrypt import checkpw
+from supabase import create_client, Client
 
+supabase = create_client("https://mvjhtngyrtkbwqxxqjni.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amh0bmd5cnRrYndxeHhxam5pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDc0MjU4OSwiZXhwIjoyMDYwMzE4NTg5fQ.WSk_VROCGlPUp78tSMK_aII34W7Gsbn_X9miPq9sqGc")
+
+def get_supabase_data():
+    return supabase.table("bot_data").select("*").execute().data
 
 def auto_admin():
     # Проверяем статус авторизации в session_state
@@ -66,12 +71,18 @@ def admin_page():
     try:
         with open("task_flow.json", 'r') as file:
             data = json.load(file)
+            data_sub = get_supabase_data()
             for datas in data:
                 container.write(f"{datas.get('name')}")
                 container.write(f"{datas.get('description')}")
                 container.write(f"{datas.get('timestamp')}")
-                if container.button(f"{datas.get('id')}", icon="✅", use_container_width=True):
+                
+                for data_subs in data_sub:
+                    container.write(f"{data_subs}")
+
+                if container.button(f"{datas.get('id')}", use_container_width=True):
                     delete_json_date(datas.get("id"))
+
 
     except (FileNotFoundError, json.JSONDecodeError):
         data = []
@@ -101,6 +112,7 @@ def delete_json_date(id: int) -> None:
             # Запись изменений
             with open('task_flow.json', 'w') as file:
                 json.dump(filtered_tasks, file, ensure_ascii=False, indent=2)
+                st.rerun()
 
     except FileNotFoundError:
         print("Файл task_flow.json не найден")
