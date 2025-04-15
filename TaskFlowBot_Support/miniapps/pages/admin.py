@@ -1,7 +1,7 @@
 import os
 import json
 import streamlit as st
-import bcrypt
+from bcrypt import checkpw
 
 
 def auto_admin():
@@ -30,7 +30,7 @@ def auto_admin():
                             for user in users:
                                 password = user.get("password").encode('utf-8')
 
-                                check = bcrypt.checkpw(
+                                check = checkpw(
                                     password=admin_password.encode('utf-8'),
                                     hashed_password=password
                                 )
