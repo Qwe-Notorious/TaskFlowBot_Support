@@ -67,10 +67,10 @@ def admin_page():
         with open("task_flow.json", 'r') as file:
             data = json.load(file)
             for datas in data:
-                container.write(f"{datas.get("name")}")
-                container.write(f"{datas.get("description")}")
-                container.write(f"{datas.get("timestamp")}")
-                if container.button(f"{datas.get("id")}", icon="✅", use_container_width=True):
+                container.write(f"{datas.get('name')}")
+                container.write(f"{datas.get('description')}")
+                container.write(f"{datas.get('timestamp')}")
+                if container.button(f"{datas.get('id')}", icon="✅", use_container_width=True):
                     delete_json_date(datas.get("id"))
 
     except (FileNotFoundError, json.JSONDecodeError):
